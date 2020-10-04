@@ -1,24 +1,22 @@
 /* eslint-disable no-console */
 /* eslint-disable camelcase */
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import Styled from 'styled-components';
 import openSocket from 'socket.io-client';
 import _ from 'lodash';
 import { useDispatch, useSelector } from 'react-redux';
-// import Swal from 'sweetalert2';
 import Noty from 'noty';
 import NavBarComponent from '../../components/navbarComponent';
 import SignalContainer from '../signal/index';
 import TicketContainer from '../ticket';
 import { AddTicketWebSocket, UpdateTicketTextWebSocket } from '../ticket/ticketAction';
-// import SweetAlertComponent from '../../components/sweetAlertComponent';
 import { ITicketState } from '../ticket/ticketType';
 import 'noty/lib/noty.css';
-// import 'noty/lib/themes/mint.css';
 import 'noty/lib/themes/relax.css';
 import { RootState } from '../../store/rootReducer';
 import { signalWebSocket } from '../signal/signalAction';
-// import 'noty/lib/themes/sunset.css';
+import { NewTicket, NewSignal, NewAssigne } from './socketHandler';
+import { ISignalData } from '../signal/signalType';
 
 type IDashboard = {};
 
@@ -30,58 +28,53 @@ const DashboardPannel = Styled.div`
   flex-direction: row;
   display: flex;
   height: calc(100vh - 64px);
-  /* padding-bottom: 10px; */
 `;
 const Dashboard: React.FC<IDashboard> = () => {
   const dispatch = useDispatch();
-  const { currentSignal } = useSelector((state: RootState) => state.TicketSlice);
-  const [isEmpty, setEmpty] = useState<boolean>(false);
+  const { currentSignal, ticketIsOpen } = useSelector((state: RootState) => state.TicketSlice);
   const [message, setMessage] = useState<any>();
+  const [currentBtn, setCurrentBtn] = useState<string>('4');
+
   useEffect(() => {
-    setEmpty(_.isEmpty(currentSignal));
-  }, [currentSignal]);
-  useEffect(() => {
-    if (isEmpty) {
-      console.log('zarkito', message);
+    // Message Close
+    if (!ticketIsOpen && !_.isEmpty(message)) {
       dispatch(UpdateTicketTextWebSocket(message));
-    } else {
-      console.log('otrkito', message);
+      // Message Open
+    } else if (ticketIsOpen && !_.isEmpty(message)) {
       if (message?.ticket === currentSignal.ticket_id) {
         dispatch(signalWebSocket(message));
+        dispatch(UpdateTicketTextWebSocket(message));
       }
       dispatch(UpdateTicketTextWebSocket(message));
     }
-  }, [message]);
-  const ws = new WebSocket('ws://10.30.200.5:80/notifications/');
-  useEffect(() => {
-    ws.onopen = function (hook) {
-      console.log('connected', hook);
+    return () => {
+      setMessage(undefined);
     };
-    ws.onmessage = function (hook) {
-      console.log(hook);
-      const data = JSON.parse(hook.data);
-      // new ticket
+  }, [message, ticketIsOpen]);
+
+  const handleStatusChange = useCallback(
+    (data) => {
       if (data.new_ticket_registered) {
         const { new_ticket_registered } = data;
-        dispatch(AddTicketWebSocket(new_ticket_registered));
-        new Noty({
-          theme: 'relax',
-          type: 'alert',
-          text: 'Зарегестрирован новый тикет'
-        }).show();
+        NewTicket(dispatch, new_ticket_registered, currentBtn);
       } else if (data.new_incoming_signal) {
         const { new_incoming_signal } = data;
-        console.log(new_incoming_signal);
-        // dispatch(AddNewMessageWebSocket(message_sent));
         setMessage(new_incoming_signal);
-        new Noty({
-          theme: 'relax',
-          type: 'alert',
-          text: 'Новое сообщение'
-        }).show();
+        NewSignal(dispatch, new_incoming_signal);
+      } else if (data.new_assignee_request) {
+        const { new_assignee_request } = data;
+        NewAssigne(dispatch, new_assignee_request, currentBtn);
       } else {
         console.log(data);
       }
+    },
+    [currentBtn]
+  );
+  useEffect(() => {
+    const ws = new WebSocket('ws://10.30.200.5:80/notifications/');
+    ws.onmessage = (hook) => {
+      const data = JSON.parse(hook.data);
+      handleStatusChange(data);
       const { channel_name } = JSON.parse(hook?.data);
       const wsJson = {
         channel_name,
@@ -91,12 +84,15 @@ const Dashboard: React.FC<IDashboard> = () => {
         ws.send(JSON.stringify(wsJson));
       }
     };
-  }, []);
+    return () => {
+      ws.close();
+    };
+  }, [handleStatusChange]);
   return (
     <Wrapper>
       <NavBarComponent />
       <DashboardPannel>
-        <TicketContainer />
+        <TicketContainer currentBtn={currentBtn} setCurrentBtn={setCurrentBtn} />
         <SignalContainer />
       </DashboardPannel>
     </Wrapper>

@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { startCase } from 'lodash';
 import { ISignal, ISignalData } from './signalType';
 
 const initialState: ISignal = {
@@ -11,7 +12,23 @@ const initialState: ISignal = {
 
   sendSignalStatus: 'none',
   sendSignalIsLoading: false,
-  sendSignalError: ''
+  sendSignalError: '',
+
+  signalArchiveStatus: 'none',
+  signalArchiveIsLoading: false,
+  signalArchiveError: '',
+
+  joinTicketStatus: 'none',
+  joinTicketIsLoading: false,
+  joinTicketError: '',
+
+  remarkTicketStatus: 'none',
+  remarkTicketIsLoading: false,
+  remarkTicketError: '',
+
+  assigmentTicketStatus: 'none',
+  assigmentTicketIsLoading: false,
+  assigmentTicketError: ''
 };
 
 const Signal = createSlice({
@@ -43,13 +60,74 @@ const Signal = createSlice({
       state.sendSignalIsLoading = true;
     },
     sendSignalComplete: (state: ISignal, action) => {
-      state.signalState = [...state.signalState, action.payload];
+      state.signalState = [action.payload];
       state.sendSignalStatus = 'success';
       state.sendSignalIsLoading = false;
     },
     sendSignalError: (state: ISignal, action) => {
       state.sendSignalStatus = 'failed';
       state.sendSignalError = action.payload;
+    },
+    signalArchiveStart: (state: ISignal) => {
+      state.signalArchiveStatus = 'requesting';
+      state.signalArchiveIsLoading = true;
+    },
+    signalArchiveComplete: (state: ISignal) => {
+      state.signalArchiveStatus = 'success';
+      state.signalArchiveIsLoading = false;
+    },
+    signalArchiveError: (state: ISignal, action) => {
+      state.signalArchiveStatus = 'failed';
+      state.signalArchiveIsLoading = false;
+      state.signalArchiveError = action.payload;
+    },
+    joinTicketStart: (state: ISignal) => {
+      state.joinTicketStatus = 'requesting';
+      state.joinTicketIsLoading = true;
+    },
+    joinTicketComplete: (state: ISignal) => {
+      state.joinTicketStatus = 'success';
+      state.joinTicketIsLoading = false;
+    },
+    joinTicketError: (state: ISignal, action) => {
+      state.remarkTicketStatus = 'failed';
+      state.remarkTicketIsLoading = false;
+      state.remarkTicketError = action.payload;
+    },
+    remarkTicketStart: (state: ISignal) => {
+      state.remarkTicketStatus = 'requesting';
+      state.remarkTicketIsLoading = true;
+    },
+    remarkTicketComplete: (state: ISignal) => {
+      state.remarkTicketStatus = 'success';
+      state.remarkTicketIsLoading = false;
+    },
+    remarkTicketError: (state: ISignal, action) => {
+      state.remarkTicketStatus = 'failed';
+      state.remarkTicketIsLoading = false;
+      state.remarkTicketError = action.payload;
+    },
+    remarkClean: (state: ISignal) => {
+      state.remarkTicketStatus = 'none';
+      state.remarkTicketIsLoading = false;
+      state.remarkTicketError = '';
+    },
+    webSocketMessage: (state: ISignal, action) => {
+      state.signalState = [...state.signalState, action.payload];
+      state.sendSignalIsLoading = false;
+    },
+    assigmentStart: (state: ISignal) => {
+      state.assigmentTicketStatus = 'requesting';
+      state.assigmentTicketIsLoading = true;
+    },
+    assigmentComplete: (state: ISignal) => {
+      state.assigmentTicketStatus = 'success';
+      state.assigmentTicketIsLoading = false;
+    },
+    assigmentError: (state: ISignal, action) => {
+      state.assigmentTicketStatus = 'failed';
+      state.assigmentTicketIsLoading = false;
+      state.assigmentTicketError = action.payload;
     }
   }
 });
@@ -60,6 +138,20 @@ export const {
   signalClean,
   sendSignalStart,
   sendSignalComplete,
-  sendSignalError
+  sendSignalError,
+  webSocketMessage,
+  signalArchiveStart,
+  signalArchiveComplete,
+  signalArchiveError,
+  joinTicketStart,
+  joinTicketComplete,
+  joinTicketError,
+  remarkTicketStart,
+  remarkTicketComplete,
+  remarkTicketError,
+  remarkClean,
+  assigmentStart,
+  assigmentComplete,
+  assigmentError
 } = Signal.actions;
 export default Signal.reducer;

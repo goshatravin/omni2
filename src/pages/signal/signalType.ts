@@ -8,6 +8,14 @@ export type IISignalComponent = {
   signalState: any;
   bottomSignalRef: any;
   handleSendMessage: any;
+  handleArchive: any;
+  handleAssigment: any;
+  handleDeal: any;
+  handleJoinTicket: any;
+  joinTicketIsLoading: boolean;
+  // handleRemarkChange: any;
+  // remarkChange: boolean;
+  // handleRemarkClose: any;
 };
 export type ISignalContainer = {};
 
@@ -20,6 +28,18 @@ export type ISignal = {
   sendSignalStatus: string;
   sendSignalIsLoading: boolean;
   sendSignalError: string;
+  signalArchiveStatus: string;
+  signalArchiveIsLoading: boolean;
+  signalArchiveError: string;
+  joinTicketStatus: string;
+  joinTicketIsLoading: boolean;
+  joinTicketError: string;
+  remarkTicketStatus: string;
+  remarkTicketIsLoading: boolean;
+  remarkTicketError: string;
+  assigmentTicketStatus: string;
+  assigmentTicketIsLoading: boolean;
+  assigmentTicketError: string;
 };
 
 export type ISignalData = {

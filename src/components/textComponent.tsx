@@ -5,7 +5,7 @@ export type IText = {
   /**
    * Optional Size of text element
    */
-  size?: 'h1' | 'h2' | 'h3' | 'p' | 'link';
+  size?: 'h1' | 'h2' | 'h3' | 'p' | 'PSmall' | 'link';
   /**
    *  Text value
    */
@@ -37,6 +37,12 @@ const P: any = Styled.p`
   color: ${(props: any) => (props.color ? props.color : props.theme.active_color)};
   font-weight: ${(props: any) => (props.weight ? '300' : '400')};
 `;
+const PSMall: any = Styled.p`
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: ${(props: any) => (props.color ? props.color : props.theme.active_color)};
+  font-weight: ${(props: any) => (props.weight ? '300' : '400')};
+`;
 const Link = Styled.p`
   letter-spacing: 1px;
   color: ${(props: any) => (props.color ? props.color : props.theme.active_color)};
@@ -55,6 +61,8 @@ export const TextComponent: React.FC<IText> = ({
 }) => {
   const TextType = () => {
     switch (size) {
+      case 'PSmall':
+        return <PSMall>{children}</PSMall>;
       case 'h1':
         return <H1 color={color}>{children}</H1>;
       case 'h2':

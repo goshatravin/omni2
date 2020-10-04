@@ -5,6 +5,10 @@ export type ISignIn = {
   signInStatus: string;
   signInIsLoading: boolean;
   signInError: string;
+  signInUser: {
+    user?: string;
+    id?: string;
+  };
 };
 export type IUserData = {
   username: string;

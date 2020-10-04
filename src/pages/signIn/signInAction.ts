@@ -1,8 +1,14 @@
-import { signInStart, signInComplete, signInError } from './signInSlice';
+import {
+  signInStart,
+  signInComplete,
+  signInError,
+  signInNameComplete,
+  signInNameError
+} from './signInSlice';
 import axiosInstance from '../../helpers/axiosInstance';
 import { AppDispatch, AppThunk } from '../../store/configureStore';
 
-const fetchUser = (username: string, password: string): AppThunk => async (
+export const fetchUser = (username: string, password: string): AppThunk => async (
   dispatch: AppDispatch
 ) => {
   dispatch(signInStart());
@@ -23,4 +29,20 @@ const fetchUser = (username: string, password: string): AppThunk => async (
     });
 };
 
-export default fetchUser;
+export const fetchName = (login: string, password: string): AppThunk => async (
+  dispatch: AppDispatch
+) =>
+  axiosInstance
+    .post('/api/v1/user/login', {
+      login,
+      password
+    })
+    .then(({ data }) => {
+      console.log(data);
+      localStorage.setItem('user', data.user);
+      localStorage.setItem('userId', data.user_id);
+      dispatch(signInNameComplete(data));
+    })
+    .catch(({ message }) => {
+      dispatch(signInNameError({ message }));
+    });

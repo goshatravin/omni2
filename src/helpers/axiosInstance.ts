@@ -5,7 +5,8 @@ import history from './history';
 
 const axiosInstance = axios.create({
   baseURL: 'http://10.30.200.5:80',
-  withCredentials: true
+  withCredentials: true,
+  method: 'GET'
 });
 if (localStorage.getItem('token')) {
   axiosInstance.defaults.headers.common.Authorization = `token ${localStorage.getItem('token')}`;

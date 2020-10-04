@@ -20,7 +20,7 @@ const StyledInput: any = Styled.input`
     color: ${(props) => props.theme.placeholderGrey}
   }
   height: 3.125rem;
-  flex: ${(props: any) => (props.flex ? props.flex : 0)};
+  flex: ${(props: any) => (props.flex ? props.flex : 'none')};
   outline: none;
   padding-left: ${(props: any) => (props.name === 'search' ? 3 : 1)}rem;
   font-size: 1rem;

@@ -1,3 +1,5 @@
+/* eslint-disable indent */
+/* eslint-disable camelcase */
 /* eslint-disable function-paren-newline */
 /* eslint-disable no-confusing-arrow */
 /* eslint-disable implicit-arrow-linebreak */
@@ -19,7 +21,8 @@ const Wrapper = Styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
-  max-width: 325px;
+  width: fit-content;
+  max-width: 350px;
 `;
 const TextBlock = Styled.div`
   flex: 1;
@@ -30,13 +33,19 @@ const TextBlock = Styled.div`
     color: #9FA9AD;
   }
   `;
+const MarginBlock = Styled.div`
+  text-align: right;
+`;
 const TicketWrapper: any = Styled.div`
   cursor: pointer;
+  border: 1px solid ${(props: any) => (props.newTicket ? '#2f80ec;' : 'none')};
   background:${(props: any) => (props.name === '1' ? '#b9dc99' : 'white')};
   box-shadow: 0px 1px 4px #DFE1E5;
   border-radius: 5px;
-  margin-bottom: 1rem;
-  padding: 1rem;
+  margin: 1rem 0.5rem;
+  /* padding: rem; */
+  padding: 1rem 1rem;
+
   span {
     color: ${(props: any) => (props.name === '1' ? '#6d6d6d' : '#9FA9AD')};
   }
@@ -46,7 +55,11 @@ const TicketSection = Styled.div`
 `;
 const Block = Styled.div`
 `;
-
+const FlexBlock = Styled.div`
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+`;
 const ImgBlock = Styled.div`
   margin-left: 0;
 `;
@@ -63,8 +76,9 @@ const WrapperScroll = Styled.div`
   overflow: auto;
 `;
 const ButtonWrapper = Styled.div`
-  padding: 1.5rem 0.5rem;
+  /* padding: 1.5rem 0.5rem; */
   display: flex;
+  padding: 1rem 1rem;
   justify-content: space-between;
 `;
 const Button = Styled.button`
@@ -74,7 +88,13 @@ const Button = Styled.button`
   border: 1px solid ${(props: any) => (props.name === props.id && props ? '#4486ad' : 'white')};
   cursor: pointer;
 `;
-
+const NewMessageBlock: any = Styled.div`
+  display: ${(props: any) => (props.newMessage ? 'block' : 'none')};
+  width: 15px;
+  height: 15px;
+  background: #2f80ec;
+  border-radius: 50%;
+`;
 const TicketComponent: React.FC<ITicketComponent> = ({
   lastTicket,
   handleFilterTicket,
@@ -97,7 +117,7 @@ const TicketComponent: React.FC<ITicketComponent> = ({
           name={currentBtn}
           key={item.id}
           type="button"
-          onClick={() => handleFilterTicket(item.id, item, item.name)}
+          onClick={() => handleFilterTicket(item.id, localStorage.getItem('userId'), item)}
         >
           {item.name}
         </Button>
@@ -114,12 +134,25 @@ const TicketComponent: React.FC<ITicketComponent> = ({
               key={item.ticket_id}
               ref={lastTicket}
               name={currentSignal.ticket_id === item.ticket_id ? '1' : ''}
+              newTicket={!!item?.newTicket}
             >
               <TicketSection>
                 <ImgBlock>
                   <MessangerImg src={MessangerImgSwitch(item.channel_type_id)} alt="img" />
                 </ImgBlock>
                 <TextBlock>
+                  <MarginBlock>
+                    <TextComponent size="PSmall" weight="light">
+                      {moment(item?.updated_at ? item?.updated_at : item.created_at).diff(
+                        moment(new Date()),
+                        'days'
+                      ) === 0
+                        ? moment(item.updated_at ? item.updated_at : item.created_at).format('hh:mm')
+                        : moment(item.updated_at ? item.updated_at : item.created_at).format(
+                            'DD-MM-YYYY  hh:mm'
+                          )}
+                    </TextComponent>
+                  </MarginBlock>
                   <Spacer y={1} />
                   <TextComponent size="h3">{item.customer}</TextComponent>
                   <Spacer y={1} />
@@ -134,18 +167,12 @@ const TicketComponent: React.FC<ITicketComponent> = ({
                   </TextComponent>
                   <Spacer y={1} />
                 </TextBlock>
-                <Block>
-                  <TextComponent size="p" weight="light">
-                    {moment(item.created_at).format('hh:mm')}
-                  </TextComponent>
-                </Block>
               </TicketSection>
               <TicketSection>
-                <Block>
-                  <TextComponent size="p">
-                    {item.latest_signal ? item.latest_signal : '...'}
-                  </TextComponent>
-                </Block>
+                <FlexBlock>
+                  <TextComponent size="p">{item?.latest_signal}</TextComponent>
+                  <NewMessageBlock newMessage={!!item?.newMessage} />
+                </FlexBlock>
               </TicketSection>
             </TicketWrapper>
           ) : (
@@ -153,12 +180,26 @@ const TicketComponent: React.FC<ITicketComponent> = ({
               onClick={() => openSignal(item)}
               key={item.ticket_id}
               name={currentSignal.ticket_id === item.ticket_id ? '1' : ''}
+              newTicket={!!item?.newTicket}
             >
               <TicketSection>
                 <ImgBlock>
                   <MessangerImg src={MessangerImgSwitch(item.channel_type_id)} alt="img" />
                 </ImgBlock>
                 <TextBlock>
+                  <MarginBlock>
+                    <TextComponent size="PSmall" weight="light">
+                      {moment(item?.updated_at ? item?.updated_at : item.created_at).diff(
+                        moment(new Date()),
+                        'days'
+                      ) === 0
+                        ? moment(item.updated_at ? item.updated_at : item.created_at).format('hh:mm')
+                        : moment(item.updated_at ? item.updated_at : item.created_at).format(
+                            'DD-MM-YYYY  hh:mm'
+                          )}
+                    </TextComponent>
+                  </MarginBlock>
+
                   <Spacer y={1} />
                   <TextComponent size="h3">{item.customer}</TextComponent>
                   <Spacer y={1} />
@@ -173,18 +214,12 @@ const TicketComponent: React.FC<ITicketComponent> = ({
                   </TextComponent>
                   <Spacer y={1} />
                 </TextBlock>
-                <Block>
-                  <TextComponent size="p" weight="light">
-                    {moment(item.created_at).format('hh:mm')}
-                  </TextComponent>
-                </Block>
               </TicketSection>
               <TicketSection>
-                <Block>
-                  <TextComponent size="p">
-                    {item.latest_signal ? item.latest_signal : '...'}
-                  </TextComponent>
-                </Block>
+                <FlexBlock>
+                  <TextComponent size="p">{item?.latest_signal}</TextComponent>
+                  <NewMessageBlock newMessage={!!item?.newMessage} />
+                </FlexBlock>
               </TicketSection>
             </TicketWrapper>
           )

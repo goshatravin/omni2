@@ -10,12 +10,13 @@ import { ticketClean } from './ticketSlice';
 import { IItem, IStatus, ITicketContainer, signalType } from './ticketType';
 import { fetchSignals } from '../signal/signalAction';
 
-const TicketContainer: React.FC<ITicketContainer> = () => {
+const TicketContainer: React.FC<ITicketContainer> = ({ setCurrentBtn, currentBtn }) => {
   const dispatch = useDispatch();
   const { ticketIsLoading, ticketHasMore } = useSelector((state: RootState) => state.TicketSlice);
+  const { signalIsLoading } = useSelector((state: RootState) => state.SignalSlice);
   const [page, setPage] = useState<number>(1);
   // const [signalPage, setSignalPage] = useState<number>(1);
-  const [currentBtn, setCurrentBtn] = useState<string>('4');
+  // const [currentBtn, setCurrentBtn] = useState<string>('4');
 
   const [filter, setFilter] = useState<IStatus>({
     status_type_id: null,
@@ -29,14 +30,14 @@ const TicketContainer: React.FC<ITicketContainer> = () => {
       setPage(1);
       setCurrentBtn(id);
       dispatch(cleanTickets());
-      if (item.type === 'status_type_id') {
+      if (name.type === 'status_type_id') {
         setFilter({
-          status_type_id: item.filter,
+          status_type_id: name.filter,
           assigned_to: null
         });
-      } else if (item.type === 'assigned_to') {
+      } else if (name.type === 'assigned_to') {
         setFilter({
-          assigned_to: item.filter,
+          assigned_to: item,
           status_type_id: null
         });
       } else {
@@ -48,8 +49,10 @@ const TicketContainer: React.FC<ITicketContainer> = () => {
     }
   };
   const openSignal = (data: signalType) => {
-    dispatch(fetchSignals(data));
-    dispatch(saveSignal(data));
+    if (!signalIsLoading) {
+      dispatch(fetchSignals(data));
+      dispatch(saveSignal(data));
+    }
   };
   useEffect(() => {
     if (!ticketIsLoading) {

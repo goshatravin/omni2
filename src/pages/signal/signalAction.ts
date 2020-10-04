@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable camelcase */
 /* eslint-disable import/prefer-default-export */
 import axiosInstance from '../../helpers/axiosInstance';
@@ -8,12 +9,31 @@ import {
   signalClean,
   sendSignalStart,
   sendSignalComplete,
-  sendSignalError
+  sendSignalError,
+  webSocketMessage,
+  signalArchiveStart,
+  signalArchiveComplete,
+  signalArchiveError,
+  joinTicketStart,
+  joinTicketComplete,
+  joinTicketError,
+  remarkTicketStart,
+  remarkTicketComplete,
+  remarkTicketError,
+  remarkClean,
+  assigmentStart,
+  assigmentComplete,
+  assigmentError
 } from './signalSlice';
 import { AppThunk, AppDispatch } from '../../store/configureStore';
 import { signalType } from '../ticket/ticketType';
-import { ticketDetailsUpdate } from '../ticket/ticketSlice';
+import {
+  joinDetailsUpdate,
+  ticketDetailsUpdate,
+  ticketDetailsUpdateSend
+} from '../ticket/ticketSlice';
 import { ISignalData } from './signalType';
+import { remarkDetailsUpdate } from '../ticket/ticketAction';
 
 export const fetchSignals = (data: signalType): AppThunk => async (dispatch: AppDispatch) => {
   // очистка ванишем
@@ -41,11 +61,16 @@ export const fetchSignals = (data: signalType): AppThunk => async (dispatch: App
 export const sendSignal = (ticket_id: string, data: any): AppThunk => async (
   dispatch: AppDispatch
 ) => {
+  const dataMessage = {
+    content_type: '2',
+    detail: data.message
+  };
   dispatch(sendSignalStart());
   return axiosInstance
-    .post(`api/v1/omnichannel/tickets/${ticket_id}/signals`, {
-      content_type: '2',
-      detail: data.message
+    .post(`api/v1/omnichannel/tickets/${ticket_id}/signals`, dataMessage, {
+      headers: {
+        Authorization: `token ${localStorage.getItem('token')}`
+      }
     })
     .then((response) => {
       const ID = () => `_${Math.random().toString(36).substr(2, 9)}`;
@@ -56,8 +81,8 @@ export const sendSignal = (ticket_id: string, data: any): AppThunk => async (
         created_at: Date.now(),
         detail: data.message
       };
-      dispatch(sendSignalComplete(newMessage));
-      dispatch(ticketDetailsUpdate(newMessage));
+      dispatch(webSocketMessage(newMessage));
+      dispatch(ticketDetailsUpdateSend(newMessage));
     })
     .catch(({ message }) => {
       dispatch(sendSignalError(message));
@@ -65,5 +90,97 @@ export const sendSignal = (ticket_id: string, data: any): AppThunk => async (
 };
 
 export const signalWebSocket = (data: ISignalData) => async (dispatch: AppDispatch) => {
-  dispatch(ticketDetailsUpdate(data));
+  dispatch(webSocketMessage(data));
+};
+export const remarkCleanTicket = () => async (dispatch: AppDispatch) => {
+  dispatch(remarkClean());
+};
+
+export const sendSignalToArchive = (data: signalType): AppThunk => async (dispatch: AppDispatch) => {
+  dispatch(signalArchiveStart());
+  return axiosInstance
+    .put(`api/v1/omnichannel/tickets/${data}`, {
+      method: 'PUT',
+      withCredentials: true,
+      headers: {
+        Authorization: `token ${localStorage.getItem('token')}`
+      }
+    })
+    .then((response) => {
+      dispatch(signalArchiveComplete());
+    })
+    .catch(({ message }) => {
+      dispatch(signalArchiveError(message));
+    });
+};
+
+export const joinTicket = (data: string) => async (dispatch: AppDispatch) => {
+  dispatch(joinTicketStart());
+  const info = {
+    status_type: 3,
+    assigned_to: localStorage.getItem('userId')
+  };
+  return axiosInstance
+    .put(`api/v1/omnichannel/tickets/${data}`, info, {
+      method: 'PUT',
+      withCredentials: true,
+      headers: {
+        Authorization: `token ${localStorage.getItem('token')}`
+      }
+    })
+    .then((response) => {
+      dispatch(joinTicketComplete());
+      const status = { status_type: 'Активное' };
+      dispatch(joinDetailsUpdate({ data, status }));
+    })
+    .catch(({ message }) => {
+      dispatch(joinTicketError(message));
+    });
+};
+
+export const remarkTicket = (data: string, remark: string) => async (dispatch: AppDispatch) => {
+  dispatch(remarkTicketStart());
+  const info = {
+    remark
+  };
+  return axiosInstance
+    .put(`api/v1/omnichannel/tickets/${data}`, info, {
+      method: 'PUT',
+      withCredentials: true,
+      headers: {
+        Authorization: `token ${localStorage.getItem('token')}`
+      }
+    })
+    .then((response) => {
+      dispatch(remarkTicketComplete());
+      dispatch(remarkDetailsUpdate(data, remark));
+    })
+    .catch(({ message }) => {
+      dispatch(remarkTicketError(message));
+    });
+};
+
+export const sendAssigment = (data: string) => async (dispatch: AppDispatch) => {
+  dispatch(assigmentStart());
+  const info = {
+    status_type: '4'
+  };
+  return axiosInstance
+    .put(`api/v1/omnichannel/tickets/${data}`, info, {
+      method: 'PUT',
+      withCredentials: true,
+      headers: {
+        Authorization: `token ${localStorage.getItem('token')}`
+      }
+    })
+    .then((response) => {
+      dispatch(assigmentComplete());
+      const status = {
+        status_type: 'Запрос на изменение ответственного'
+      };
+      dispatch(joinDetailsUpdate({ data, status }));
+    })
+    .catch(({ message }) => {
+      dispatch(assigmentError(message));
+    });
 };

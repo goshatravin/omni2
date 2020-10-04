@@ -9,7 +9,7 @@ import { IUserData } from './signInType';
 import { RootState } from '../../store/rootReducer';
 import { reset } from '../../store/globalAction';
 import LogoComponent from '../../components/logoComponent';
-import fetchUser from './signInAction';
+import { fetchUser, fetchName } from './signInAction';
 
 const Wrapper = Styled.div`
   display: flex;
@@ -53,6 +53,7 @@ const SignInContainer: React.FC = () => {
   const formSubmit = (data: IUserData) => {
     const { username, password } = data;
     dispatch(fetchUser(username, password));
+    dispatch(fetchName(username, password));
   };
   useEffect(() => {
     const handleSweet = (isConfirmed: boolean) => {

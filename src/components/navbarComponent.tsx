@@ -1,13 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Styled from 'styled-components';
 import Avatar from 'react-avatar';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import history from '../helpers/history';
 import Logo from '../theme/svg/Logo.svg';
 import SignOut from '../theme/svg/arrow.svg';
 import Info from '../theme/svg/info.svg';
 import Setting from '../theme/svg/settings.svg';
 import { reset } from '../store/globalAction';
+import { RootState } from '../store/rootReducer';
 
 const NavBar = Styled.div`
   height: 4rem;
@@ -18,7 +19,7 @@ const NavBar = Styled.div`
   justify-content: space-between;
   display: flex;
 `;
-const AvatarCustom = Styled(Avatar)`
+const AvatarCustom: any = Styled(Avatar)`
   cursor: pointer;
   span{
     letter-spacing:0.1rem;
@@ -68,7 +69,6 @@ const NavBarComponent: React.FC<INavBarComponent> = () => {
   const [openDrop, setOpenDrop] = useState<boolean>(false);
   const dispatch = useDispatch();
   const ref = useRef<any>(null);
-
   const handleClick = (e: any) => {
     if (ref.current.contains(e.target)) {
       return;
@@ -94,9 +94,9 @@ const NavBarComponent: React.FC<INavBarComponent> = () => {
       </LogoWrapper>
       <AvatarWrapper ref={ref}>
         <AvatarCustom
-          name="Georgey Travin"
+          name={localStorage.getItem('user') ? localStorage.getItem('user') : 'user'}
           round
-          size="50"
+          size="40"
           color="#F6F6F6"
           onClick={() => setOpenDrop(!openDrop)}
         />

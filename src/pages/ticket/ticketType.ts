@@ -23,8 +23,11 @@ export type ITicketState = {
   page_index?: number;
   remark?: string;
   status_type?: string;
-  ticket_id?: string;
+  status_type_id?: string;
+  ticket_id: string;
   updated_at?: string;
+  newTicket?: boolean;
+  newMessage?: true;
 };
 export type IItem = {
   filter: number | string;
@@ -37,7 +40,10 @@ export type IStatus = {
   status_type_id: any;
   assigned_to: any;
 };
-export type ITicketContainer = {};
+export type ITicketContainer = {
+  currentBtn: string;
+  setCurrentBtn: React.Dispatch<React.SetStateAction<string>>;
+};
 export type ITicketComponent = {
   lastTicket: any;
   handleFilterTicket: any;

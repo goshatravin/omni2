@@ -1,3 +1,5 @@
+/* eslint-disable operator-linebreak */
+/* eslint-disable indent */
 /* eslint-disable function-paren-newline */
 /* eslint-disable no-confusing-arrow */
 /* eslint-disable implicit-arrow-linebreak */
@@ -35,7 +37,16 @@ const Tickets = createSlice({
       state.ticketError = action.payload;
       state.ticketHasMore = false;
     },
+    signalSaveStart: (state: ITicket) => {
+      state.ticketIsOpen = false;
+    },
     signalCompleted: (state: ITicket, action) => {
+      state.ticketState = state.ticketState.map((item: ITicketState) =>
+        (item.ticket_id === action.payload.ticket_id && item?.newTicket === true) ||
+        (item.ticket_id === action.payload.ticket_id && item?.newMessage === true)
+          ? { ...item, newTicket: false, newMessage: false }
+          : item
+      );
       state.ticketIsOpen = true;
       state.currentSignal = action.payload;
     },
@@ -46,12 +57,52 @@ const Tickets = createSlice({
     ticketDetailsUpdate: (state: ITicket, action) => {
       state.ticketState = state.ticketState.map((item: ITicketState) =>
         item.ticket_id === action.payload.ticket
-          ? { ...item, latest_signal: action.payload.detail, created_at: action.payload.created_at }
+          ? {
+              ...item,
+              latest_signal: action.payload.detail,
+              updated_at: action.payload.updated_at,
+              newMessage: true
+            }
           : item
       );
     },
+    ticketDetailsUpdateSend: (state: ITicket, action) => {
+      state.ticketState = state.ticketState.map((item: ITicketState) =>
+        item.ticket_id === action.payload.ticket
+          ? {
+              ...item,
+              latest_signal: action.payload.detail,
+              updated_at: action.payload.updated_at,
+              newMessage: false
+            }
+          : item
+      );
+    },
+    remarDetailsUpdate: (state: ITicket, action) => {
+      state.currentSignal = { ...state.currentSignal, remark: action.payload.remark };
+      state.ticketState = state.ticketState.map((item: ITicketState) =>
+        item.ticket_id === action.payload.data
+          ? {
+              ...item,
+              remark: action.payload.remark
+            }
+          : item
+      );
+    },
+    ticketDelete: (state: ITicket, action) => {
+      state.ticketState = state.ticketState.filter(
+        (item: ITicketState) => action.payload !== item.ticket_id
+      );
+    },
     ticketWebSocket: (state: ITicket, action) => {
-      state.ticketState = [action.payload, ...state.ticketState];
+      state.ticketState = state.ticketState.find((item: any) =>
+        item.ticket_id === action.payload.ticket_id
+          ? state.ticketState
+          : [action.payload, ...state.ticketState]
+      );
+    },
+    ticketUpdate: (state: ITicket, action) => {
+      state.currentSignal = action.payload;
     },
     ticketClean: (state: ITicket) => {
       state.ticketState = [];
@@ -59,6 +110,20 @@ const Tickets = createSlice({
       state.ticketIsLoading = false;
       state.ticketError = '';
       state.ticketHasMore = false;
+    },
+    joinDetailsUpdate: (state: ITicket, action) => {
+      state.ticketState = state.ticketState.map((item: ITicketState) =>
+        item.ticket_id === action.payload.data
+          ? {
+              ...item,
+              status_type: action.payload.status.status_type,
+              assigned_to:
+                action.payload.status.status_type === 'Активное'
+                  ? localStorage.getItem('user')
+                  : item.assigned_to
+            }
+          : item
+      );
     }
   }
 });
@@ -71,6 +136,12 @@ export const {
   signalCompleted,
   ticketDetailsUpdate,
   signalClose,
-  ticketWebSocket
+  ticketWebSocket,
+  ticketDelete,
+  ticketDetailsUpdateSend,
+  ticketUpdate,
+  signalSaveStart,
+  remarDetailsUpdate,
+  joinDetailsUpdate
 } = Tickets.actions;
 export default Tickets.reducer;
