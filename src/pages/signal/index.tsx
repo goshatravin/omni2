@@ -103,7 +103,7 @@ const SignalContainer: React.FC<ISignalContainer> = () => {
         allowOutsideClick: true
       });
       dispatch(CloseSignal());
-      dispatch(deleteTicket(currentSignal.ticket_id));
+      // dispatch(deleteTicket(currentSignal.ticket_id));
     }
   }, [signalArchiveStatus]);
   // Join Ticket

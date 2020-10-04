@@ -98,8 +98,11 @@ export const remarkCleanTicket = () => async (dispatch: AppDispatch) => {
 
 export const sendSignalToArchive = (data: signalType): AppThunk => async (dispatch: AppDispatch) => {
   dispatch(signalArchiveStart());
+  const info = {
+    status_type: '5'
+  };
   return axiosInstance
-    .put(`api/v1/omnichannel/tickets/${data}`, {
+    .put(`api/v1/omnichannel/tickets/${data}`, info, {
       method: 'PUT',
       withCredentials: true,
       headers: {
@@ -108,6 +111,8 @@ export const sendSignalToArchive = (data: signalType): AppThunk => async (dispat
     })
     .then((response) => {
       dispatch(signalArchiveComplete());
+      const status = { status_type: 'Архив' };
+      dispatch(joinDetailsUpdate({ data, status }));
     })
     .catch(({ message }) => {
       dispatch(signalArchiveError(message));

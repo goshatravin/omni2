@@ -64,6 +64,9 @@ const Dashboard: React.FC<IDashboard> = () => {
       } else if (data.new_assignee_request) {
         const { new_assignee_request } = data;
         NewAssigne(dispatch, new_assignee_request, currentBtn);
+      } else if (data.new_ticket_assigned) {
+        const { new_ticket_assigned } = data;
+        console.log(data);
       } else {
         console.log(data);
       }

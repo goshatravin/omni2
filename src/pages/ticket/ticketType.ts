@@ -10,6 +10,7 @@ export type ITicket = {
 };
 export type ITicketState = {
   assigned_to?: string;
+  assigned_to_id?: string;
   case?: string;
   case_id?: string;
   case_status?: string;

@@ -154,11 +154,7 @@ export const RemarkComponent: React.FC<IRemark> = ({ currentSignal }) => {
       ) : (
         <>
           <RemarkText>
-            <p>
-              {currentSignal?.remark
-                ? currentSignal?.remark
-                : ' много сообщение тут много много сообщение тут многомного сообщение тут много'}
-            </p>
+            <p>{currentSignal?.remark ? currentSignal?.remark : 'Тут пусто'}</p>
           </RemarkText>
           <RemarkButton type="button" onClick={() => handleRemarkChange(currentSignal?.remark)}>
             <img src={Edit} alt="Edit" />

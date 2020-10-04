@@ -215,8 +215,7 @@ const SignalComponent: React.FC<IISignalComponent> = ({
       <HeaderWrapper>{headerChat}</HeaderWrapper>
       <ChatWrapper>{chatHistory}</ChatWrapper>
       <Form onSubmit={handleSubmit(handleSendMessage)}>
-        {/* {currentSignal?.assigned_to !== localStorage.getItem('userId') ? ( */}
-        {currentSignal?.assigned_to !== 'Георгий Травин' ? (
+        {currentSignal?.assigned_to_id !== localStorage.getItem('userId') ? (
           <JoinButtonWrapper>
             <ButtonComponent
               borderRadius={false}

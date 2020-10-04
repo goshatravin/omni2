@@ -20,7 +20,10 @@ export const NewTicket = (dispatch: Dispatch<any>, data: ITicketState, currentBt
     dispatch(AddTicketWebSocket(data));
     Notification(Text.notifications.new_ticket);
     // В очереди
-  } else if (currentBtn === '3' && data.status_type_id === '2') {
+  } else if (
+    (currentBtn === '3' && data.status_type_id === '4') ||
+    (currentBtn === '3' && data.status_type_id === '3')
+  ) {
     dispatch(AddTicketWebSocket(data));
     Notification(Text.notifications.new_ticket);
     // Все
