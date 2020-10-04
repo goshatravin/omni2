@@ -62,7 +62,7 @@ export const sendSignal = (ticket_id: string, data: any): AppThunk => async (
   dispatch: AppDispatch
 ) => {
   const dataMessage = {
-    content_type: '2',
+    content_type: '1',
     detail: data.message
   };
   dispatch(sendSignalStart());
