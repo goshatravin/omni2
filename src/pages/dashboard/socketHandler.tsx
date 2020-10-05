@@ -4,7 +4,7 @@
 /* eslint-disable camelcase */
 import React, { Dispatch } from 'react';
 import { ISignalData } from '../signal/signalType';
-import { AddTicketWebSocket } from '../ticket/ticketAction';
+import { AddTicketWebSocket, AddTicketAssignWebSocket } from '../ticket/ticketAction';
 import { ITicketState } from '../ticket/ticketType';
 import { Notification } from './notificationHandler';
 import { Text } from './text';
@@ -43,7 +43,7 @@ export const NewSignal = (dispatch: Dispatch<any>, data: ISignalData) => {
 
 export const NewAssigne = (dispatch: Dispatch<any>, data: ITicketState, currentBtn: string) => {
   if (currentBtn === '3') {
-    dispatch(AddTicketWebSocket(data));
+    dispatch(AddTicketAssignWebSocket(data));
     Notification(Text.notifications.new_assigne);
   } else {
     Notification(Text.notifications.new_assigne);

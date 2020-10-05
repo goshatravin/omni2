@@ -95,7 +95,10 @@ const Tickets = createSlice({
       );
     },
     ticketWebSocket: (state: ITicket, action) => {
-      state.ticketState = state.ticketState.find((item: any) =>
+      state.ticketState = [action.payload, ...state.ticketState];
+    },
+    ticketAssignWebSocket: (state: ITicket, action) => {
+      state.ticketState = state.ticketState.filter((item: any) =>
         item.ticket_id === action.payload.ticket_id
           ? state.ticketState
           : [action.payload, ...state.ticketState]
@@ -142,6 +145,7 @@ export const {
   ticketUpdate,
   signalSaveStart,
   remarDetailsUpdate,
-  joinDetailsUpdate
+  joinDetailsUpdate,
+  ticketAssignWebSocket
 } = Tickets.actions;
 export default Tickets.reducer;

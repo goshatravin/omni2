@@ -13,7 +13,8 @@ import {
   ticketDelete,
   ticketUpdate,
   signalSaveStart,
-  remarDetailsUpdate
+  remarDetailsUpdate,
+  ticketAssignWebSocket
 } from './ticketSlice';
 import { AppThunk, AppDispatch } from '../../store/configureStore';
 import { ITicketState, signalType } from './ticketType';
@@ -61,6 +62,11 @@ export const AddTicketWebSocket = (data: ITicketState) => async (dispatch: AppDi
   const myObj = data;
   myObj.newTicket = true;
   dispatch(ticketWebSocket(myObj));
+};
+export const AddTicketAssignWebSocket = (data: ITicketState) => async (dispatch: AppDispatch) => {
+  const myObj = data;
+  myObj.newTicket = true;
+  dispatch(ticketAssignWebSocket(myObj));
 };
 // update details into ticket
 export const UpdateTicketTextWebSocket = (data: ITicketState) => async (dispatch: AppDispatch) => {
