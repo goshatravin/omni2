@@ -1,6 +1,15 @@
 import { FormStateProxy, DeepMap, FieldError } from 'react-hook-form';
 
 export type ISignIn = {
+  changeStatusState: '';
+  changeStatusIsLoading: boolean;
+  changeStatusError: string;
+  userListState: [];
+  userListIsLoading: boolean;
+  userListError: string;
+  userStatusListState: [];
+  userStatusListIsLoading: boolean;
+  userStatusListError: string;
   signInState: string;
   signInStatus: string;
   signInIsLoading: boolean;

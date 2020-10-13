@@ -20,9 +20,12 @@ import { AppThunk, AppDispatch } from '../../store/configureStore';
 import { ITicketState, signalType } from './ticketType';
 
 // get all tickets
-const fetchTickets = (page: number, statusTypeId = '', assignedTo = ''): AppThunk => async (
-  dispatch: AppDispatch
-) => {
+const fetchTickets = (
+  page: number,
+  statusTypeId = '',
+  assignedTo = '',
+  search?: string
+): AppThunk => async (dispatch: AppDispatch) => {
   dispatch(ticketFetchingStart());
   return axiosInstance
     .get('api/v1/omnichannel/tickets', {
@@ -32,7 +35,8 @@ const fetchTickets = (page: number, statusTypeId = '', assignedTo = ''): AppThun
       params: {
         page,
         status_type_id: statusTypeId || undefined,
-        assigned_to: assignedTo || undefined
+        assigned_to: assignedTo || undefined,
+        search
       },
       paramsSerializer: (params) => qs.stringify(params, { indices: false })
     })

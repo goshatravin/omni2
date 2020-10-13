@@ -4,10 +4,13 @@
 /* eslint-disable implicit-arrow-linebreak */
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import Swal from 'sweetalert2';
 import SignInComponent from '../signIn/signInComponent';
 import { ISignalContainer } from './signalType';
 import SignalComponent from './signalComponent';
 import {
+  AttachDeal,
+  AttachSaveDeal,
   fetchSignals,
   joinTicket,
   sendAssigment,
@@ -20,7 +23,7 @@ import { CloseSignal, deleteTicket, updateTicket } from '../ticket/ticketAction'
 
 const SignalContainer: React.FC<ISignalContainer> = () => {
   const dispatch = useDispatch();
-
+  const { userListState } = useSelector((state: RootState) => state.SignInSlice);
   const { currentSignal, ticketIsOpen } = useSelector((state: RootState) => state.TicketSlice);
   const {
     signalIsLoading,
@@ -36,7 +39,10 @@ const SignalContainer: React.FC<ISignalContainer> = () => {
     joinTicketError,
     assigmentTicketStatus,
     assigmentTicketIsLoading,
-    assigmentTicketError
+    assigmentTicketError,
+    dealAttachError,
+    dealAttachIsLoading,
+    dealAttachState
   } = useSelector((state: RootState) => state.SignalSlice);
 
   const [signalPage, setSignalPage] = useState<number>(0);
@@ -46,6 +52,57 @@ const SignalContainer: React.FC<ISignalContainer> = () => {
       node.scrollIntoView();
     }
   }, []);
+  useEffect(() => {
+    console.log(dealAttachState);
+    if (dealAttachState && !dealAttachIsLoading) {
+      Swal.fire({
+        title: 'Прекрепить данное страховое дело?',
+        html: `
+        <br/><pre><code>Дата рождения - ${dealAttachState?.dob_insured}</code></pre><br/>
+              <pre><code>Имя - ${dealAttachState?.fullname_insured}</code></pre><br/>
+              <pre><code>ID -${dealAttachState?.id_claim_case}</code></pre>
+            `,
+        showCancelButton: true,
+        cancelButtonText: 'Нет',
+        confirmButtonText: 'Несомненно!'
+      }).then(({ isConfirmed }) => {
+        if (isConfirmed) {
+          dispatch(AttachSaveDeal(currentSignal?.ticket_id, dealAttachState?.id_claim_case));
+        }
+      });
+    }
+  }, [dealAttachState]);
+  const handleAttachUser = (data: any) => {
+    console.log(userListState);
+    const userList = userListState.map((item: any) => `${item.first_name} ${item.last_name}`);
+    if (userListState.length !== 0) {
+      Swal.mixin({
+        input: 'select',
+        inputOptions: {
+          userList
+        },
+        confirmButtonText: 'Отправить',
+        showCancelButton: true
+        // inputPlaceholder: 'Please select'
+      })
+        .queue([
+          {
+            text: 'Выбирите оператора,которого хотите назначить отвественным'
+          }
+        ])
+        .then((response: any) => {
+          console.log(response);
+          if (response.value) {
+            const answer: any = userListState.find(
+              (item, index) => index === Number(response.value)
+            );
+            console.log(answer);
+            dispatch(sendAssigment(data, '2', answer));
+          }
+        });
+    }
+    // console.log(data);
+  };
   const handleSendMessage = (data: any) => {
     const { ticket_id } = currentSignal;
     dispatch(sendSignal(ticket_id, data));
@@ -55,10 +112,45 @@ const SignalContainer: React.FC<ISignalContainer> = () => {
     dispatch(sendSignalToArchive(data));
   };
   const handleAssigment = (data: any) => {
-    dispatch(sendAssigment(data));
+    Swal.mixin({
+      input: 'text',
+      confirmButtonText: 'Отправить',
+      showCancelButton: true
+      // inputPlaceholder: 'Please select'
+    })
+      .queue([
+        {
+          text: 'Причина запроса'
+        }
+      ])
+      .then((response: any) => {
+        console.log(response);
+        if (response.value) {
+          dispatch(sendAssigment(data, '4', response.value[0]));
+        }
+      });
   };
   const handleDeal = (data: any) => {
-    console.log(data);
+    Swal.mixin({
+      input: 'text',
+      confirmButtonText: 'Next &rarr;',
+      showCancelButton: true,
+      progressSteps: ['1', '2']
+    })
+      .queue([
+        {
+          text: 'Введите реферативный номер'
+        },
+        {
+          text: 'Введите Серийный номер'
+        }
+      ])
+      .then((result: any) => {
+        console.log(result);
+        if (result.value) {
+          dispatch(AttachDeal(result.value[0], result.value[1]));
+        }
+      });
   };
 
   const handleJoinTicket = (data: any) => {
@@ -131,6 +223,7 @@ const SignalContainer: React.FC<ISignalContainer> = () => {
   const RenderData = () =>
     ticketIsOpen ? (
       <SignalComponent
+        handleAttachUser={handleAttachUser}
         sendSignalIsLoading={sendSignalIsLoading}
         currentSignal={currentSignal}
         signalIsLoading={signalIsLoading}

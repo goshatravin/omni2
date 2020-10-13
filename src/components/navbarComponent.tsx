@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Styled from 'styled-components';
 import Avatar from 'react-avatar';
+
 import { useDispatch, useSelector } from 'react-redux';
 import history from '../helpers/history';
 import Logo from '../theme/svg/Logo.svg';
@@ -9,6 +10,7 @@ import Info from '../theme/svg/info.svg';
 import Setting from '../theme/svg/settings.svg';
 import { reset } from '../store/globalAction';
 import { RootState } from '../store/rootReducer';
+import DropDownComponent from './dropDown';
 
 const NavBar = Styled.div`
   height: 4rem;
@@ -20,6 +22,7 @@ const NavBar = Styled.div`
   display: flex;
 `;
 const AvatarCustom: any = Styled(Avatar)`
+  margin-left: 0.5rem;
   cursor: pointer;
   span{
     letter-spacing:0.1rem;
@@ -61,6 +64,8 @@ const MenuButton = Styled.div`
 const LogoWrapper = Styled.div``;
 const AvatarWrapper = Styled.div`
   position: relative;
+  display: flex;
+  align-items: center;
 `;
 
 type INavBarComponent = {};
@@ -93,6 +98,7 @@ const NavBarComponent: React.FC<INavBarComponent> = () => {
         <img src={Logo} alt="Logo" />
       </LogoWrapper>
       <AvatarWrapper ref={ref}>
+        <DropDownComponent />
         <AvatarCustom
           name={localStorage.getItem('user') ? localStorage.getItem('user') : 'user'}
           round

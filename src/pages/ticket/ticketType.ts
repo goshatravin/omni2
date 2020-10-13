@@ -50,6 +50,10 @@ export type ITicketComponent = {
   handleFilterTicket: any;
   currentBtn: string;
   openSignal: (data: signalType) => void;
+  setHandleSearchChange: any;
+  handleSearchChange: string;
+  sendSearch: any;
+  handleCleanSearch: any;
 };
 
 export type signalType = {

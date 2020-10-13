@@ -23,6 +23,7 @@ import { CloseSignal } from '../ticket/ticketAction';
 import { TextComponent } from '../../components/textComponent';
 import ButtonComponent from '../../components/buttonComponent';
 import { RemarkComponent } from './remarkComponent';
+import { DealComponent } from './dealComponent';
 
 const Wrapper = Styled.div`
   display: flex;
@@ -147,7 +148,11 @@ const Form = Styled.form``;
 
 const JoinButtonWrapper = Styled.div`
 `;
-const HeaderPannelInfo = Styled.div``;
+const HeaderPannelInfo = Styled.div`
+  h3{
+    margin-top: 1rem;
+  }
+`;
 
 const SignalComponent: React.FC<IISignalComponent> = ({
   currentSignal,
@@ -160,7 +165,8 @@ const SignalComponent: React.FC<IISignalComponent> = ({
   handleAssigment,
   handleDeal,
   handleJoinTicket,
-  joinTicketIsLoading
+  joinTicketIsLoading,
+  handleAttachUser
   // handleRemarkChange,
   // remarkChange,
   // handleRemarkClose
@@ -265,10 +271,10 @@ const SignalComponent: React.FC<IISignalComponent> = ({
           <ButtonActive type="button" onClick={() => handleAssigment(currentSignal?.ticket_id)}>
             Запросить изменение ответственного
           </ButtonActive>
-          <ButtonActive type="button" disabled onClick={() => handleDeal(currentSignal?.ticket_id)}>
+          <ButtonActive type="button" onClick={() => handleDeal(currentSignal?.ticket_id)}>
             Страховое дело
           </ButtonActive>
-          <ButtonActive type="button" disabled onClick={() => handleDeal(currentSignal?.ticket_id)}>
+          <ButtonActive type="button" onClick={() => handleAttachUser(currentSignal?.ticket_id)}>
             Изменение ответственного лица (в ручную)
           </ButtonActive>
         </ActionBox>
@@ -276,6 +282,8 @@ const SignalComponent: React.FC<IISignalComponent> = ({
       <HeaderPannelInfo>
         <TextComponent size="h3">Ремарка</TextComponent>
         <RemarkComponent currentSignal={currentSignal} />
+        <TextComponent size="h3">Страховое дело</TextComponent>
+        <DealComponent />
       </HeaderPannelInfo>
     </HeaderPannel>
   );

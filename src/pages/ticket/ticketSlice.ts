@@ -127,6 +127,17 @@ const Tickets = createSlice({
             }
           : item
       );
+    },
+    AssignSaveDetailsUpdate: (state: ITicket, action) => {
+      state.ticketState = state.ticketState.map((item: ITicketState) =>
+        item.ticket_id === action.payload.data
+          ? {
+              ...item,
+              status_type: action.payload.status.status_type,
+              assigned_to: `${action.payload.answer.first_name} ${action.payload.answer.last_name}`
+            }
+          : item
+      );
     }
   }
 });
@@ -146,6 +157,7 @@ export const {
   signalSaveStart,
   remarDetailsUpdate,
   joinDetailsUpdate,
-  ticketAssignWebSocket
+  ticketAssignWebSocket,
+  AssignSaveDetailsUpdate
 } = Tickets.actions;
 export default Tickets.reducer;

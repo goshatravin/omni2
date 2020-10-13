@@ -3,7 +3,16 @@ import {
   signInComplete,
   signInError,
   signInNameComplete,
-  signInNameError
+  signInNameError,
+  userStatusListStart,
+  userStatusListComplete,
+  userStatusListError,
+  userListStart,
+  userListComplete,
+  userListError,
+  changeStatusStart,
+  changeStatusComplete,
+  changeStatusError
 } from './signInSlice';
 import axiosInstance from '../../helpers/axiosInstance';
 import { AppDispatch, AppThunk } from '../../store/configureStore';
@@ -46,3 +55,44 @@ export const fetchName = (login: string, password: string): AppThunk => async (
     .catch(({ message }) => {
       dispatch(signInNameError({ message }));
     });
+
+export const fetchStatuses = (): AppThunk => async (dispatch: AppDispatch) => {
+  dispatch(userStatusListStart());
+  axiosInstance
+    .get('/api/v1/user/user_status_types')
+    .then(({ data }) => {
+      console.log(data);
+      dispatch(userStatusListComplete(data));
+    })
+    .catch(({ message }) => {
+      dispatch(userStatusListError({ message }));
+    });
+};
+
+export const fetchUsers = (): AppThunk => async (dispatch: AppDispatch) => {
+  dispatch(userListStart());
+  axiosInstance
+    .get('/api/v1/user/users')
+    .then(({ data }) => {
+      console.log(data);
+      dispatch(userListComplete(data));
+    })
+    .catch(({ message }) => {
+      dispatch(userListError({ message }));
+    });
+};
+
+export const changeStatus = (value: any): AppThunk => async (dispatch: AppDispatch) => {
+  dispatch(changeStatusStart());
+  axiosInstance
+    .put(`/api/v1/user/statuses/${localStorage.getItem('userId')}`, {
+      user_status_type_id: value
+    })
+    .then(({ data }) => {
+      console.log(data);
+      dispatch(changeStatusComplete(data));
+    })
+    .catch(({ message }) => {
+      dispatch(changeStatusError({ message }));
+    });
+};

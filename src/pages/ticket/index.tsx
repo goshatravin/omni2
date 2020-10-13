@@ -22,10 +22,38 @@ const TicketContainer: React.FC<ITicketContainer> = ({ setCurrentBtn, currentBtn
     status_type_id: null,
     assigned_to: null
   });
+  const [handleSearchChange, setHandleSearchChange] = useState<any>('');
   const [currentTicket, setCurrentTicket] = useState<any>(null);
   const lastTicket = InfinityScroll(ticketIsLoading, setPage, ticketHasMore);
-
+  // useEffect(() => {
+  //   console.log(handleSearchChange);
+  //   setCurrentBtn('4');
+  //   dispatch(cleanTickets());
+  // }, [handleSearchChange]);
+  const handleCleanSearch = () => {
+    setHandleSearchChange('');
+    setPage(1);
+    setCurrentBtn('4');
+    setFilter({
+      status_type_id: null,
+      assigned_to: null
+    });
+    dispatch(cleanTickets());
+    dispatch(fetchTickets(page, filter.status_type_id, filter.assigned_to));
+  };
+  const sendSearch = () => {
+    setPage(1);
+    setCurrentBtn('4');
+    setFilter({
+      status_type_id: null,
+      assigned_to: null
+    });
+    dispatch(cleanTickets());
+    console.log(handleSearchChange);
+    dispatch(fetchTickets(page, filter.status_type_id, filter.assigned_to, handleSearchChange));
+  };
   const handleFilterTicket = (id: any, item: IItem, name: any) => {
+    setHandleSearchChange('');
     if (currentBtn !== id) {
       setPage(1);
       setCurrentBtn(id);
@@ -56,13 +84,17 @@ const TicketContainer: React.FC<ITicketContainer> = ({ setCurrentBtn, currentBtn
   };
   useEffect(() => {
     if (!ticketIsLoading) {
-      dispatch(fetchTickets(page, filter.status_type_id, filter.assigned_to));
+      dispatch(fetchTickets(page, filter.status_type_id, filter.assigned_to, handleSearchChange));
     }
   }, [page, filter.status_type_id, filter.assigned_to]);
 
   return (
     <TicketComponent
+      handleCleanSearch={handleCleanSearch}
+      sendSearch={sendSearch}
       openSignal={openSignal}
+      setHandleSearchChange={setHandleSearchChange}
+      handleSearchChange={handleSearchChange}
       lastTicket={lastTicket}
       handleFilterTicket={handleFilterTicket}
       currentBtn={currentBtn}

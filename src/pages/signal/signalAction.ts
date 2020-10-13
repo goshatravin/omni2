@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable max-len */
 /* eslint-disable camelcase */
 /* eslint-disable import/prefer-default-export */
@@ -23,11 +24,18 @@ import {
   remarkClean,
   assigmentStart,
   assigmentComplete,
-  assigmentError
+  assigmentError,
+  dealAttachStart,
+  dealAttachError,
+  dealAttachComplete,
+  dealAttachSaveStart,
+  dealAttachSaveComplete,
+  dealAttachSaveError
 } from './signalSlice';
 import { AppThunk, AppDispatch } from '../../store/configureStore';
 import { signalType } from '../ticket/ticketType';
 import {
+  AssignSaveDetailsUpdate,
   joinDetailsUpdate,
   ticketDetailsUpdate,
   ticketDetailsUpdateSend
@@ -165,11 +173,22 @@ export const remarkTicket = (data: string, remark: string) => async (dispatch: A
     });
 };
 
-export const sendAssigment = (data: string) => async (dispatch: AppDispatch) => {
+export const sendAssigment = (data: string, status_type: any = 4, answer?: any) => async (
+  dispatch: AppDispatch
+) => {
+  let info;
+  if (status_type !== '4') {
+    info = {
+      status_type,
+      assigned_to: answer.id
+    };
+  } else {
+    info = {
+      status_type,
+      reassignment_request_reason: answer
+    };
+  }
   dispatch(assigmentStart());
-  const info = {
-    status_type: '4'
-  };
   return axiosInstance
     .put(`api/v1/omnichannel/tickets/${data}`, info, {
       method: 'PUT',
@@ -179,13 +198,62 @@ export const sendAssigment = (data: string) => async (dispatch: AppDispatch) => 
       }
     })
     .then((response) => {
+      console.log(data);
       dispatch(assigmentComplete());
-      const status = {
-        status_type: 'Запрос на изменение ответственного'
-      };
-      dispatch(joinDetailsUpdate({ data, status }));
+      let status;
+      if (status_type !== '4') {
+        status = {
+          status_type: 'Назначен ответственный'
+        };
+      } else {
+        status = {
+          status_type: 'Запрос на изменение ответственного'
+        };
+      }
+      if (status_type !== '4') {
+        dispatch(AssignSaveDetailsUpdate({ data, status, answer }));
+      } else {
+        dispatch(joinDetailsUpdate({ data, status }));
+      }
     })
     .catch(({ message }) => {
       dispatch(assigmentError(message));
+    });
+};
+
+export const AttachDeal = (reNumber: string, seNumber: string) => async (dispatch: AppDispatch) => {
+  dispatch(dealAttachStart());
+  return axiosInstance
+    .get(`/api/v1/insurance/cases?refid_number=${reNumber}&serial_number=${seNumber}`, {
+      method: 'GET',
+      withCredentials: true,
+      headers: {
+        Authorization: `token ${localStorage.getItem('token')}`
+      }
+    })
+    .then(({ data }) => {
+      dispatch(dealAttachComplete(data));
+    })
+    .catch(({ message }) => {
+      dispatch(dealAttachError(message));
+    });
+};
+export const AttachSaveDeal = (ticketId: string, caseId: string) => async (
+  dispatch: AppDispatch
+) => {
+  dispatch(dealAttachSaveStart());
+  return axiosInstance
+    .put(`/api/v1/omnichannel/tickets/${ticketId}`, {
+      method: 'GET',
+      withCredentials: true,
+      headers: {
+        Authorization: `token ${localStorage.getItem('token')}`
+      }
+    })
+    .then(({ data }) => {
+      dispatch(dealAttachSaveComplete(data));
+    })
+    .catch(({ message }) => {
+      dispatch(dealAttachSaveError(message));
     });
 };

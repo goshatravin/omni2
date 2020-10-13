@@ -28,7 +28,15 @@ const initialState: ISignal = {
 
   assigmentTicketStatus: 'none',
   assigmentTicketIsLoading: false,
-  assigmentTicketError: ''
+  assigmentTicketError: '',
+
+  dealAttachState: '',
+  dealAttachIsLoading: false,
+  dealAttachError: '',
+
+  dealAttachSaveState: '',
+  dealAttachSaveIsLoading: false,
+  dealAttachSaveError: ''
 };
 
 const Signal = createSlice({
@@ -128,10 +136,40 @@ const Signal = createSlice({
       state.assigmentTicketStatus = 'failed';
       state.assigmentTicketIsLoading = false;
       state.assigmentTicketError = action.payload;
+    },
+    dealAttachStart: (state: ISignal) => {
+      state.dealAttachIsLoading = true;
+    },
+    dealAttachComplete: (state: ISignal, action) => {
+      state.dealAttachIsLoading = false;
+      state.dealAttachState = action.payload;
+    },
+    dealAttachError: (state: ISignal, action) => {
+      state.dealAttachIsLoading = false;
+      state.dealAttachState = 'Failed';
+      state.dealAttachError = action.payload;
+    },
+    dealAttachSaveStart: (state: ISignal) => {
+      state.dealAttachSaveIsLoading = true;
+    },
+    dealAttachSaveComplete: (state: ISignal, action) => {
+      state.dealAttachSaveIsLoading = false;
+      state.dealAttachSaveState = action.payload;
+    },
+    dealAttachSaveError: (state: ISignal, action) => {
+      state.dealAttachSaveIsLoading = false;
+      state.dealAttachSaveState = 'Failed';
+      state.dealAttachSaveError = action.payload;
     }
   }
 });
 export const {
+  dealAttachSaveStart,
+  dealAttachSaveComplete,
+  dealAttachSaveError,
+  dealAttachStart,
+  dealAttachError,
+  dealAttachComplete,
   signalFetchingStart,
   signalFetchingComplete,
   signalFetchingError,

@@ -2,6 +2,7 @@
 import { signalType } from '../ticket/ticketType';
 
 export type IISignalComponent = {
+  handleAttachUser: any;
   currentSignal: any;
   signalIsLoading: boolean;
   sendSignalIsLoading: boolean;
@@ -20,6 +21,12 @@ export type IISignalComponent = {
 export type ISignalContainer = {};
 
 export type ISignal = {
+  dealAttachSaveState: any;
+  dealAttachSaveIsLoading: boolean;
+  dealAttachSaveError: string;
+  dealAttachState: any;
+  dealAttachIsLoading: boolean;
+  dealAttachError: string;
   signalState: any;
   signalStatus: string;
   signalIsLoading: boolean;

@@ -8,6 +8,7 @@ type IInput = {
   name: string;
   type: string;
   register?: any;
+  width?: string;
   value?: string;
   disabled?: boolean;
   validation?: any;
@@ -23,9 +24,10 @@ const StyledInput: any = Styled.input`
   flex: ${(props: any) => (props.flex ? props.flex : 'none')};
   outline: none;
   padding-left: ${(props: any) => (props.name === 'search' ? 3 : 1)}rem;
+  padding-right: ${(props: any) => (props.name === 'search' ? 3 : 0)}rem;
   font-size: 1rem;
   border-radius: 5px;
-  width: 330px;
+  width: ${(props: any) => (props.width ? props.width : 330)}px;
   border: 1px solid ${(props: any) =>
     props.validation?.type === 'pattern' ||
     props.validation?.type === 'required' ||
@@ -47,6 +49,7 @@ const StyledInput: any = Styled.input`
 const InputComponent: React.FC<IInput> = ({
   name,
   type,
+  width,
   register,
   validation,
   placeholder,
@@ -57,6 +60,7 @@ const InputComponent: React.FC<IInput> = ({
 }) => (
   <StyledInput
     flex={flex}
+    width={width}
     type={type}
     name={name}
     ref={register}

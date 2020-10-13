@@ -5,7 +5,7 @@ import Swal from 'sweetalert2';
 type ISweet = {
   title: string;
   text?: string;
-  icon: 'warning' | 'error' | 'success' | 'info';
+  icon?: 'warning' | 'error' | 'success' | 'info';
   confirmButtonText: string;
   allowOutsideClick: boolean;
   timer?: any;
@@ -13,6 +13,7 @@ type ISweet = {
   position?: any;
   showConfirmButton?: boolean;
   toast?: boolean;
+  input?: any;
 };
 
 const SweetAlertComponent: React.FC<ISweet> = ({
@@ -25,7 +26,8 @@ const SweetAlertComponent: React.FC<ISweet> = ({
   position,
   timer,
   showConfirmButton,
-  toast
+  toast,
+  input
 }): any => {
   if (handleSweet) {
     Swal.fire({
@@ -45,6 +47,7 @@ const SweetAlertComponent: React.FC<ISweet> = ({
     Swal.fire({
       title,
       text,
+      input,
       icon,
       confirmButtonText,
       position,

@@ -8,11 +8,15 @@ import { useSelector } from 'react-redux';
 import Styled from 'styled-components';
 import moment from 'moment';
 import Skeleton from 'react-loading-skeleton';
+import Search from '../../theme/svg/search.svg';
+import Close from '../../theme/svg/close.svg';
 import { TextComponent } from '../../components/textComponent';
 import { RootState } from '../../store/rootReducer';
 import { ITicketComponent, ITicketState } from './ticketType';
 import { Spacer } from '../../components/spacer';
 import { buttonData, MessangerImgSwitch } from './ticketFunctions';
+import InputComponent from '../../components/inputComponent';
+import ButtonComponent from '../../components/buttonComponent';
 
 const Wrapper = Styled.div`
   /* width: fit-content; */
@@ -95,11 +99,43 @@ const NewMessageBlock: any = Styled.div`
   background: #2f80ec;
   border-radius: 50%;
 `;
+const SearchWrapper = Styled.div`
+  padding: 1rem 1rem 0 1rem;
+  position: relative;
+  max-width: 100%;
+`;
+const ButtonSearch: any = Styled.button`
+  cursor: ${(props: any) => (!props.disabled ? 'pointer' : 'not-allowed;')};
+  margin-top: 1rem ;
+  padding: 0.5rem 1rem;
+  background:${(props: any) => (props.disabled ? '#9fb1ca' : '#2f80ec')};
+  border:none;
+  border-radius: 10px;
+  color: white;
+
+`;
+const ImgClose = Styled.img`
+    position: absolute;
+    top: 35px;
+    left: 300px;
+    max-width: 1rem;
+    cursor: pointer;
+`;
+const ImgSearch = Styled.img`
+    position: absolute;
+    top:31px;
+    left: 31px;
+    max-width: 1.25rem;
+`;
 const TicketComponent: React.FC<ITicketComponent> = ({
   lastTicket,
   handleFilterTicket,
   currentBtn,
-  openSignal
+  openSignal,
+  setHandleSearchChange,
+  handleSearchChange,
+  sendSearch,
+  handleCleanSearch
 }) => {
   const {
     ticketState,
@@ -232,6 +268,28 @@ const TicketComponent: React.FC<ITicketComponent> = ({
 
   return (
     <Wrapper>
+      <SearchWrapper>
+        <InputComponent
+          value={handleSearchChange}
+          onChange={(e) => setHandleSearchChange(e.target.value)}
+          type="text"
+          name="search"
+          width="230"
+        />
+        <ButtonSearch
+          disabled={handleSearchChange.length === 0}
+          type="button"
+          onClick={() => sendSearch()}
+        >
+          Отправить
+        </ButtonSearch>
+
+        {handleSearchChange.length !== 0 && (
+          <ImgClose src={Close} onClick={() => handleCleanSearch()} alt="" />
+        )}
+
+        <ImgSearch src={Search} alt="" />
+      </SearchWrapper>
       <ButtonWrapper>
         <RenderButtonSearch />
       </ButtonWrapper>

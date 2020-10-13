@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { stat } from 'fs';
 import { ISignIn } from './signInType';
 
 const initialState: ISignIn = {
@@ -6,7 +7,19 @@ const initialState: ISignIn = {
   signInStatus: 'none',
   signInIsLoading: false,
   signInError: '',
-  signInUser: {}
+  signInUser: {},
+
+  userStatusListState: [],
+  userStatusListIsLoading: false,
+  userStatusListError: '',
+
+  userListState: [],
+  userListIsLoading: false,
+  userListError: '',
+
+  changeStatusState: '',
+  changeStatusIsLoading: false,
+  changeStatusError: ''
 };
 
 const userAuth = createSlice({
@@ -32,6 +45,39 @@ const userAuth = createSlice({
     },
     signInNameError: (state: ISignIn, action) => {
       state.signInError = action.payload;
+    },
+    userStatusListStart: (state: ISignIn) => {
+      state.userStatusListIsLoading = true;
+    },
+    userStatusListComplete: (state: ISignIn, action) => {
+      state.userStatusListIsLoading = false;
+      state.userStatusListState = action.payload;
+    },
+    userStatusListError: (state: ISignIn, action) => {
+      state.userStatusListIsLoading = false;
+      state.userStatusListError = action.payload;
+    },
+    userListStart: (state: ISignIn) => {
+      state.userListIsLoading = true;
+    },
+    userListComplete: (state: ISignIn, action) => {
+      state.userListIsLoading = false;
+      state.userListState = action.payload;
+    },
+    userListError: (state: ISignIn, action) => {
+      state.userListIsLoading = false;
+      state.userListError = action.payload;
+    },
+    changeStatusStart: (state: ISignIn) => {
+      state.changeStatusIsLoading = true;
+    },
+    changeStatusComplete: (state: ISignIn, action) => {
+      state.changeStatusIsLoading = false;
+      state.changeStatusState = action.payload;
+    },
+    changeStatusError: (state: ISignIn, action) => {
+      state.changeStatusError = action.payload;
+      state.changeStatusIsLoading = false;
     }
   }
 });
@@ -41,6 +87,15 @@ export const {
   signInComplete,
   signInError,
   signInNameComplete,
-  signInNameError
+  signInNameError,
+  userStatusListStart,
+  userStatusListComplete,
+  userStatusListError,
+  userListStart,
+  userListComplete,
+  userListError,
+  changeStatusStart,
+  changeStatusComplete,
+  changeStatusError
 } = userAuth.actions;
 export default userAuth.reducer;
