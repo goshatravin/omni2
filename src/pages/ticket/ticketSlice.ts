@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 /* eslint-disable operator-linebreak */
 /* eslint-disable indent */
 /* eslint-disable function-paren-newline */
