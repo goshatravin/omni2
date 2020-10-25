@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-one-expression-per-line */
 /* eslint-disable camelcase */
 /* eslint-disable import/prefer-default-export */
 import React, { useEffect } from 'react';
@@ -22,42 +23,43 @@ type IDeal = {
   currentSignal: any;
 };
 
-export const DealComponent: React.FC<IDeal> = ({ currentSignal }) => {
+export const DealComponent: React.FC<IDeal> = () => {
   const { dealAttachSaveError, dealAttachSaveIsLoading, dealAttachSaveState } = useSelector(
     (state: RootState) => state.SignalSlice
   );
+  const { currentSignal } = useSelector((state: RootState) => state.TicketSlice);
   useEffect(() => {
-    console.log(dealAttachSaveState);
-  }, [dealAttachSaveState]);
+    console.log(currentSignal);
+  }, [currentSignal]);
   return (
     <Wrapper>
       {currentSignal?.insured_name && (
         <TextWrapper>
-          <span>insured_named:</span>
+          <span>ФИО:</span>
           <TextComponent>{currentSignal?.insured_name}</TextComponent>
         </TextWrapper>
       )}
       {currentSignal?.case_id && (
         <TextWrapper>
-          <span>case_id:</span>
+          <span>ID дела:</span>
           <TextComponent>{currentSignal?.case_id}</TextComponent>
         </TextWrapper>
       )}
       {currentSignal?.case_refid && (
         <TextWrapper>
-          <span>case_refid:</span>
+          <span>Реферативный номер:</span>
           <TextComponent>{currentSignal?.case_refid}</TextComponent>
         </TextWrapper>
       )}
       {currentSignal?.case_status && (
         <TextWrapper>
-          <span>case_status:</span>
+          <span>Текущий статус</span>
           <TextComponent> {currentSignal?.case_status}</TextComponent>
         </TextWrapper>
       )}
       {currentSignal?.insured_dob && (
         <TextWrapper>
-          <span>insured_dob:</span>
+          <span>Дата рождения</span>
           <TextComponent>{currentSignal?.insured_dob}</TextComponent>
         </TextWrapper>
       )}

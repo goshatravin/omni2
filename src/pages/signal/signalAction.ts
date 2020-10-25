@@ -36,6 +36,7 @@ import { AppThunk, AppDispatch } from '../../store/configureStore';
 import { signalType } from '../ticket/ticketType';
 import {
   AssignSaveDetailsUpdate,
+  dealTicketUpdate,
   joinDetailsUpdate,
   ticketDetailsUpdate,
   ticketDetailsUpdateSend
@@ -238,20 +239,25 @@ export const AttachDeal = (reNumber: string, seNumber: string) => async (dispatc
       dispatch(dealAttachError(message));
     });
 };
-export const AttachSaveDeal = (ticketId: string, caseId: string) => async (
+export const AttachSaveDeal = (ticketId: string, caseId: string, dealAttachState: any) => async (
   dispatch: AppDispatch
 ) => {
   dispatch(dealAttachSaveStart());
   return axiosInstance
-    .put(`/api/v1/omnichannel/tickets/${ticketId}`, {
-      method: 'GET',
-      withCredentials: true,
-      headers: {
-        Authorization: `token ${localStorage.getItem('token')}`
+    .put(
+      `/api/v1/omnichannel/tickets/${ticketId}`,
+      { case_id: caseId },
+      {
+        method: 'GET',
+        withCredentials: true,
+        headers: {
+          Authorization: `token ${localStorage.getItem('token')}`
+        }
       }
-    })
+    )
     .then(({ data }) => {
-      dispatch(dealAttachSaveComplete(data));
+      dispatch(dealAttachSaveComplete({ ticketId, dealAttachState }));
+      dispatch(dealTicketUpdate({ ticketId, dealAttachState }));
     })
     .catch(({ message }) => {
       dispatch(dealAttachSaveError(message));

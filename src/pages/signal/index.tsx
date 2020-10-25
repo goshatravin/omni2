@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* eslint-disable camelcase */
 /* eslint-disable react/jsx-wrap-multilines */
 /* eslint-disable no-confusing-arrow */
@@ -67,7 +68,9 @@ const SignalContainer: React.FC<ISignalContainer> = () => {
         confirmButtonText: 'Несомненно!'
       }).then(({ isConfirmed }) => {
         if (isConfirmed) {
-          dispatch(AttachSaveDeal(currentSignal?.ticket_id, dealAttachState?.id_claim_case));
+          dispatch(
+            AttachSaveDeal(currentSignal?.ticket_id, dealAttachState?.id_claim_case, dealAttachState)
+          );
         }
       });
     }

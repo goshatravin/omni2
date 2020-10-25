@@ -138,6 +138,28 @@ const Tickets = createSlice({
             }
           : item
       );
+    },
+    dealTicketUpdate: (state: ITicket, action) => {
+      state.currentSignal = {
+        ...state.currentSignal,
+        case_id: action.payload.dealAttachState?.id_claim_case,
+        case_refid: action.payload.dealAttachState?.case_refid,
+        case_status: action.payload.dealAttachState?.case_status,
+        insured_dob: action.payload.dealAttachState?.dob_insured,
+        insured_name: action.payload.dealAttachState?.fullname_insured
+      };
+      state.ticketState = state.ticketState.map((item: ITicketState) =>
+        item.ticket_id === action.payload.ticketId
+          ? {
+              ...item,
+              case_id: action.payload.dealAttachState?.id_claim_case,
+              case_refid: action.payload.dealAttachState?.case_refid,
+              case_status: action.payload.dealAttachState?.case_status,
+              insured_dob: action.payload.dealAttachState?.dob_insured,
+              insured_name: action.payload.dealAttachState?.fullname_insured
+            }
+          : item
+      );
     }
   }
 });
@@ -158,6 +180,7 @@ export const {
   remarDetailsUpdate,
   joinDetailsUpdate,
   ticketAssignWebSocket,
-  AssignSaveDetailsUpdate
+  AssignSaveDetailsUpdate,
+  dealTicketUpdate
 } = Tickets.actions;
 export default Tickets.reducer;
