@@ -19,7 +19,11 @@ const initialState: ISignIn = {
 
   changeStatusState: '',
   changeStatusIsLoading: false,
-  changeStatusError: ''
+  changeStatusError: '',
+
+  userStatusState: {},
+  userStatusIsLoading: false,
+  userStatusError: ''
 };
 
 const userAuth = createSlice({
@@ -78,11 +82,25 @@ const userAuth = createSlice({
     changeStatusError: (state: ISignIn, action) => {
       state.changeStatusError = action.payload;
       state.changeStatusIsLoading = false;
+    },
+    getStatusStart: (state: ISignIn) => {
+      state.userStatusIsLoading = true;
+    },
+    getStatusComplete: (state: ISignIn, action) => {
+      state.userStatusIsLoading = false;
+      state.userStatusState = action.payload;
+    },
+    getStatusError: (state: ISignIn, action) => {
+      state.userStatusIsLoading = false;
+      state.userStatusError = action.payload;
     }
   }
 });
 
 export const {
+  getStatusStart,
+  getStatusComplete,
+  getStatusError,
   signInStart,
   signInComplete,
   signInError,

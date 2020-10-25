@@ -1,3 +1,4 @@
+/* eslint-disable implicit-arrow-linebreak */
 import {
   signInStart,
   signInComplete,
@@ -12,7 +13,10 @@ import {
   userListError,
   changeStatusStart,
   changeStatusComplete,
-  changeStatusError
+  changeStatusError,
+  getStatusStart,
+  getStatusComplete,
+  getStatusError
 } from './signInSlice';
 import axiosInstance from '../../helpers/axiosInstance';
 import { AppDispatch, AppThunk } from '../../store/configureStore';
@@ -59,7 +63,11 @@ export const fetchName = (login: string, password: string): AppThunk => async (
 export const fetchStatuses = (): AppThunk => async (dispatch: AppDispatch) => {
   dispatch(userStatusListStart());
   axiosInstance
-    .get('/api/v1/user/user_status_types')
+    .get('/api/v1/user/user_status_types', {
+      headers: {
+        Authorization: `token ${localStorage.getItem('token')}`
+      }
+    })
     .then(({ data }) => {
       console.log(data);
       dispatch(userStatusListComplete(data));
@@ -72,7 +80,11 @@ export const fetchStatuses = (): AppThunk => async (dispatch: AppDispatch) => {
 export const fetchUsers = (): AppThunk => async (dispatch: AppDispatch) => {
   dispatch(userListStart());
   axiosInstance
-    .get('/api/v1/user/users')
+    .get('/api/v1/user/users', {
+      headers: {
+        Authorization: `token ${localStorage.getItem('token')}`
+      }
+    })
     .then(({ data }) => {
       console.log(data);
       dispatch(userListComplete(data));
@@ -86,7 +98,7 @@ export const changeStatus = (value: any): AppThunk => async (dispatch: AppDispat
   dispatch(changeStatusStart());
   axiosInstance
     .put(`/api/v1/user/statuses/${localStorage.getItem('userId')}`, {
-      user_status_type_id: value
+      user_status_type_id: value as string
     })
     .then(({ data }) => {
       console.log(data);
@@ -94,5 +106,20 @@ export const changeStatus = (value: any): AppThunk => async (dispatch: AppDispat
     })
     .catch(({ message }) => {
       dispatch(changeStatusError({ message }));
+    });
+};
+export const getUserStatus = (): AppThunk => async (dispatch: AppDispatch) => {
+  dispatch(getStatusStart());
+  axiosInstance
+    .get('/api/v1/user/statuses/3', {
+      headers: {
+        Authorization: `token ${localStorage.getItem('token')}`
+      }
+    })
+    .then(({ data }) => {
+      dispatch(getStatusComplete(data));
+    })
+    .catch(({ message }) => {
+      dispatch(getStatusError({ message }));
     });
 };

@@ -282,8 +282,13 @@ const SignalComponent: React.FC<IISignalComponent> = ({
       <HeaderPannelInfo>
         <TextComponent size="h3">Ремарка</TextComponent>
         <RemarkComponent currentSignal={currentSignal} />
-        <TextComponent size="h3">Страховое дело</TextComponent>
-        <DealComponent />
+
+        {currentSignal.case_id !== null && currentSignal.case_id !== undefined && (
+          <>
+            <TextComponent size="h3">Страховое дело</TextComponent>
+            <DealComponent currentSignal={currentSignal} />
+          </>
+        )}
       </HeaderPannelInfo>
     </HeaderPannel>
   );
